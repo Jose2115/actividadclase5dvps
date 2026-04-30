@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import os
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-tabla = dynamodb.Table('ClientesFinanzas')
+tabla = dynamodb.Table('Base_Finanzas')
 
 def modificar_atributo(id_cliente, atributo, nuevo_valor, usuario):
     """

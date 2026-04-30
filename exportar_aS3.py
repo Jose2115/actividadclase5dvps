@@ -7,7 +7,7 @@ s3 = boto3.client('s3', region_name='us-east-1')
 BUCKET_NAME = 'finanzas-mexico-datos'  # Cambia por tu bucket
 
 def exportar_a_s3():
-    tabla = dynamodb.Table('BaseFinanzas')
+    tabla = dynamodb.Table('Base_Finanzas')
     respuesta = tabla.scan()
     items = respuesta['Items']
 
