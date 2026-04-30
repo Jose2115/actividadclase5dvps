@@ -1,14 +1,16 @@
 version: 0.2
+
 phases:
   install:
     commands:
       - pip install boto3
   build:
     commands:
-      - echo "Ejecutando actualización de registros..."
+      - echo "Creando tabla..."
+      - python crear_tabla.py
+      - echo "Insertando 50 registros..."
+      - python base_datos.py
+      - echo "Aplicando modificaciones..."
       - python modificar_registro.py
       - echo "Generando reporte para Finanzas..."
       - python exportar_aS3.py
-artifacts:
-  files:
-    - '**/*'
