@@ -5,7 +5,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 def crear_tabla():
     tabla = dynamodb.create_table(
-        TableName='ClientesFinanzas',
+        TableName='BaseFinanzas',
         KeySchema=[
             {'AttributeName': 'id', 'KeyType': 'HASH'}
         ],
