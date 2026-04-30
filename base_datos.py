@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timezone
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-tabla = dynamodb.Table('Base_Finanzas')
+tabla = dynamodb.Table('Base_finanzas')
 
 nombres = ["Carlos López", "María García", "Juan Pérez", "Ana Torres",
            "Luis Ramírez", "Sofía Martínez", "Pedro Sánchez", "Elena Díaz",

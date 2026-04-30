@@ -1,21 +1,19 @@
 import boto3
 from datetime import datetime, timezone
-import os
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-tabla = dynamodb.Table('Base_Finanzas')
+tabla = dynamodb.Table('Base_finanzas')  # nombre exacto con f minúscula
 
 def modificar_atributo(id_cliente, atributo, nuevo_valor, usuario):
-    """
-    Modifica un atributo y registra: qué cambió, cuándo y quién
-    """
-    # Obtener el elemento actual
     respuesta = tabla.get_item(Key={'id': id_cliente})
     item = respuesta.get('Item', {})
 
+    if not item:
+        print(f"⚠️ ID {id_cliente} no encontrado, saltando...")
+        return
+
     valor_anterior = item.get(atributo, 'N/A')
 
-    # Registro del cambio
     nuevo_cambio = {
         'atributo_modificado': atributo,
         'valor_anterior': str(valor_anterior),
@@ -27,7 +25,6 @@ def modificar_atributo(id_cliente, atributo, nuevo_valor, usuario):
     historial = item.get('historial_cambios', [])
     historial.append(nuevo_cambio)
 
-    # Actualizar en DynamoDB
     tabla.update_item(
         Key={'id': id_cliente},
         UpdateExpression="""
@@ -44,9 +41,23 @@ def modificar_atributo(id_cliente, atributo, nuevo_valor, usuario):
             ':historial': historial
         }
     )
-    print(f"✅ [{usuario}] Modificó '{atributo}' de '{valor_anterior}' → '{nuevo_valor}' en {id_cliente}")
+    print(f"✅ [{usuario}] Modificó '{atributo}': '{valor_anterior}' → '{nuevo_valor}'")
 
-# Ejemplo de dos modificaciones registradas
-modificar_atributo('CLI-0001', 'ciudad', 'Monterrey', 'jperez@finanzas.mx')
-modificar_atributo('CLI-0001', 'monto_venta', 99999.99, 'mgomez@finanzas.mx')
-modificar_atributo('CLI-0005', 'producto', 'Servidor', 'jperez@finanzas.mx')
+# Obtener IDs reales de la tabla
+print("Obteniendo items de la tabla...")
+response = tabla.scan(Limit=5)
+items = response.get('Items', [])
+
+if len(items) < 2:
+    print("❌ No hay suficientes items en la tabla")
+    exit(1)
+
+# Modificar con IDs reales
+id1 = items[0]['id']
+id2 = items[1]['id']
+
+modificar_atributo(id1, 'ciudad', 'Monterrey', 'jperez@finanzas.mx')
+modificar_atributo(id1, 'monto_venta', '99999.99', 'mgomez@finanzas.mx')
+modificar_atributo(id2, 'producto', 'Servidor', 'jperez@finanzas.mx')
+
+print("✅ Modificaciones registradas exitosamente")
